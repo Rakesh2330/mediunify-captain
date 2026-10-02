@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "MediUnify Captain",
+    "slug": "mediunify-captain",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./public/logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./public/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#001730"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mediunify.captain"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./public/logo.png",
+        "backgroundColor": "#001730"
+      },
+      "package": "com.mediunify.captain"
+    }
+  }
+}

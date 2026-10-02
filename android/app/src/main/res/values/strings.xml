@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MediUnify Captain</string>
+    <string name="title_activity_main">MediUnify Captain</string>
+    <string name="package_name">com.mediunify.captain</string>
+    <string name="custom_url_scheme">com.mediunify.captain</string>
+</resources>
