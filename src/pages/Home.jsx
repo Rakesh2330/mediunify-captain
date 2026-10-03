@@ -68,7 +68,7 @@ export default function Home() {
             ? 'radial-gradient(circle at 90% 15%, rgba(0, 168, 150, 0.35) 0%, transparent 45%), linear-gradient(135deg, #001730 0%, #002B66 55%, #001E3D 100%)'
             : 'radial-gradient(circle at 90% 15%, rgba(2, 132, 199, 0.35) 0%, transparent 45%), linear-gradient(135deg, #001226 0%, #002244 55%, #001A35 100%)',
           borderRadius: 'var(--radius-xl)',
-          padding: '28px 30px',
+          padding: isMobile ? '16px 14px' : '26px 28px',
           color: 'white',
           boxShadow: 'var(--shadow-lg)',
           position: 'relative',
@@ -77,64 +77,74 @@ export default function Home() {
         }}
       >
         <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '12px' : '16px' }}>
+            <div style={{ minWidth: 0, width: isMobile ? '100%' : 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
                 <span 
                   style={{ 
-                    fontSize: '11px', 
+                    fontSize: '10.5px', 
                     background: 'rgba(255, 255, 255, 0.16)', 
-                    padding: '4px 12px', 
+                    padding: '3px 10px', 
                     borderRadius: '999px', 
                     fontWeight: '800', 
-                    letterSpacing: '0.05em',
+                    letterSpacing: '0.04em',
                     border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
                 >
                   {isPharmacy ? 'PHARMACY DISPATCH FLEET' : 'DIAGNOSTIC SAMPLE COLLECTION FLEET'}
                 </span>
-                <span style={{ fontSize: '12px', color: '#5EEAD4', fontWeight: '700' }}>
-                  • {profile.city} Sector
+                <span style={{ fontSize: '11.5px', color: '#5EEAD4', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#5EEAD4' }} />
+                  {profile.city} Sector
                 </span>
               </div>
-              <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#FFFFFF', margin: '4px 0', letterSpacing: '-0.02em' }}>
+
+              <h1 style={{ fontSize: isMobile ? '19.5px' : '25px', fontWeight: '800', color: '#FFFFFF', margin: '2px 0 6px 0', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
                 Good Morning, {profile.name}
               </h1>
-              <p style={{ fontSize: '13px', color: '#CBD5E1', marginTop: '4px' }}>
-                Captain ID: <strong style={{ color: '#FFFFFF' }}>{profile.id}</strong> • Vehicle: <strong style={{ color: '#FFFFFF' }}>{profile.vehicle}</strong> • Rating: <strong style={{ color: '#FDE047' }}>★ {profile.rating}</strong>
-              </p>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', fontSize: isMobile ? '11.5px' : '12.5px', color: '#CBD5E1', lineHeight: 1.4 }}>
+                <span>ID: <strong style={{ color: '#FFFFFF' }}>{profile.id}</strong></span>
+                <span style={{ opacity: 0.35 }}>•</span>
+                <span style={{ whiteSpace: 'nowrap' }}>Vehicle: <strong style={{ color: '#FFFFFF' }}>{profile.vehicle}</strong></span>
+                <span style={{ opacity: 0.35 }}>•</span>
+                <span style={{ color: '#FDE047', fontWeight: '800', whiteSpace: 'nowrap' }}>★ {profile.rating}</span>
+              </div>
             </div>
 
             {/* Prominent Duty Status Switcher */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.12)',
+                background: 'rgba(255, 255, 255, 0.10)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '12px 18px',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
+                borderRadius: '12px',
+                padding: isMobile ? '10px 14px' : '12px 18px',
+                border: '1px solid rgba(255, 255, 255, 0.20)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '16px',
-                boxShadow: '0 8px 20px rgba(0, 0, 0, 0.2)'
+                justifyContent: 'space-between',
+                gap: '12px',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.18)',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box'
               }}
             >
               <div>
-                <div style={{ fontSize: '11px', color: '#CBD5E1', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <div style={{ fontSize: '10px', color: '#CBD5E1', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Duty Status
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
                   <span
                     style={{
-                      width: '10px',
-                      height: '10px',
+                      width: '9px',
+                      height: '9px',
                       borderRadius: '50%',
                       background: dutyStatus === 'ONLINE' ? '#10B981' : '#94A3B8',
-                      boxShadow: dutyStatus === 'ONLINE' ? '0 0 10px #10B981, 0 0 0 3px rgba(16, 185, 129, 0.3)' : 'none'
+                      boxShadow: dutyStatus === 'ONLINE' ? '0 0 8px #10B981, 0 0 0 2px rgba(16, 185, 129, 0.3)' : 'none'
                     }}
                   />
-                  <strong style={{ fontSize: '15px', color: '#FFFFFF', letterSpacing: '0.02em' }}>{dutyStatus}</strong>
+                  <strong style={{ fontSize: '14.5px', color: '#FFFFFF', letterSpacing: '0.02em' }}>{dutyStatus}</strong>
                 </div>
               </div>
 
@@ -145,18 +155,18 @@ export default function Home() {
                   color: dutyStatus === 'ONLINE' ? 'white' : '#002244',
                   border: 'none',
                   borderRadius: 'var(--radius-full)',
-                  padding: '9px 18px',
+                  padding: isMobile ? '7px 14px' : '9px 18px',
                   fontWeight: '800',
-                  fontSize: '12.5px',
+                  fontSize: isMobile ? '11.5px' : '12.5px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                  boxShadow: '0 3px 10px rgba(0,0,0,0.18)',
                   transition: 'all var(--transition-fast)'
                 }}
               >
-                {dutyStatus === 'ONLINE' ? <Wifi size={15} /> : <WifiOff size={15} />}
+                {dutyStatus === 'ONLINE' ? <Wifi size={14} /> : <WifiOff size={14} />}
                 <span>Go {dutyStatus === 'ONLINE' ? 'Offline' : 'Online'}</span>
               </button>
             </div>
@@ -165,28 +175,32 @@ export default function Home() {
           {/* Duty Availability Message */}
           <div
             style={{
-              marginTop: '20px',
-              padding: '11px 16px',
-              borderRadius: 'var(--radius-md)',
+              marginTop: isMobile ? '12px' : '18px',
+              padding: isMobile ? '10px 12px' : '11px 16px',
+              borderRadius: '10px',
               background: dutyStatus === 'ONLINE' ? 'rgba(0, 168, 150, 0.22)' : 'rgba(239, 68, 68, 0.18)',
-              border: `1px solid ${dutyStatus === 'ONLINE' ? 'rgba(0, 168, 150, 0.45)' : 'rgba(239, 68, 68, 0.35)'}`,
-              fontSize: '13px',
+              border: `1px solid ${dutyStatus === 'ONLINE' ? 'rgba(0, 196, 159, 0.45)' : 'rgba(239, 68, 68, 0.35)'}`,
+              fontSize: isMobile ? '12px' : '13px',
+              lineHeight: 1.45,
               display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
+              alignItems: 'flex-start',
+              gap: '9px'
             }}
           >
-            {dutyStatus === 'ONLINE' ? (
-              <>
-                <CheckCircle2 size={16} color="#34D399" />
-                <span>You are <strong>online & ready</strong> for instant dispatches in your assigned zone.</span>
-              </>
-            ) : (
-              <>
-                <AlertCircle size={16} color="#F87171" />
-                <span>You are currently <strong>offline</strong>. Switch Online to receive active order alerts.</span>
-              </>
-            )}
+            <div style={{ marginTop: '2px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+              {dutyStatus === 'ONLINE' ? (
+                <CheckCircle2 size={15} color="#34D399" />
+              ) : (
+                <AlertCircle size={15} color="#F87171" />
+              )}
+            </div>
+            <div style={{ flex: 1, minWidth: 0, color: '#E2E8F0' }}>
+              {dutyStatus === 'ONLINE' ? (
+                <span>You are <strong style={{ color: '#FFFFFF' }}>online & ready</strong> for instant dispatches in your assigned zone.</span>
+              ) : (
+                <span>You are currently <strong style={{ color: '#FFFFFF' }}>offline</strong>. Switch Online to receive active order alerts.</span>
+              )}
+            </div>
           </div>
         </div>
       </div>
