@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -27,7 +27,18 @@ import { useTasks } from '../context/TaskContext';
 export default function Profile() {
   const navigate = useNavigate();
   const { profile, captainType, updateProfile, logout, deviceMode } = useAuth();
-  const isMobile = deviceMode === 'mobile_frame';
+  
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = deviceMode === 'mobile_frame' || windowWidth <= 768;
   const { labTasks, pharmacyTasks } = useTasks();
   const isPharmacy = captainType === 'pharmacy';
   const tasks = isPharmacy ? pharmacyTasks : labTasks;
@@ -356,43 +367,166 @@ export default function Profile() {
         className="card"
         style={{
           borderLeft: `5px solid ${isPharmacy ? '#00A896' : '#002244'}`,
-          background: '#FFFFFF'
+          background: '#FFFFFF',
+          padding: isMobile ? '16px' : '22px 24px',
+          boxShadow: 'var(--shadow-sm)',
+          borderRadius: 'var(--radius-lg)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: isPharmacy ? '#E6F8F5' : '#EEF4FB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isPharmacy ? '#00A896' : '#002244', flexShrink: 0 }}>
-            <Award size={22} />
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Top row with Icon, Badge & Title */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: isMobile ? '12px' : '16px' }}>
+            <div
+              style={{
+                width: isMobile ? '40px' : '44px',
+                height: isMobile ? '40px' : '44px',
+                borderRadius: '12px',
+                background: isPharmacy ? '#E6F8F5' : '#EEF4FB',
+                border: `1px solid ${isPharmacy ? '#99F6E4' : '#BFDBFE'}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: isPharmacy ? '#00A896' : '#002244',
+                flexShrink: 0
+              }}
+            >
+              <Award size={isMobile ? 20 : 24} />
+            </div>
 
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-heading)' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {/* Status and Ref Row */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: '#ECFDF5',
+                    color: '#065F46',
+                    border: '1px solid #A7F3D0',
+                    fontSize: '11px',
+                    fontWeight: '800',
+                    padding: '2.5px 8px',
+                    borderRadius: '999px',
+                    letterSpacing: '0.03em'
+                  }}
+                >
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} />
+                  ACTIVE & VERIFIED
+                </span>
+
+                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>
+                  Ref: <strong style={{ color: 'var(--text-heading)' }}>{profile.licenseNo}</strong>
+                </span>
+              </div>
+
+              <h3
+                style={{
+                  fontSize: isMobile ? '15px' : '17px',
+                  fontWeight: '800',
+                  color: 'var(--text-heading)',
+                  lineHeight: 1.35,
+                  margin: '4px 0 0 0',
+                  wordBreak: 'break-word'
+                }}
+              >
                 {isPharmacy ? 'Drug Distribution & Courier Logistics Authorization' : 'NABL Certified Phlebotomist Credential'}
               </h3>
-              <span style={{ background: '#ECFDF5', color: '#065F46', fontSize: '11px', fontWeight: '800', padding: '3px 8px', borderRadius: '4px' }}>
-                ACTIVE & VERIFIED
-              </span>
             </div>
+          </div>
 
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px', lineHeight: 1.5 }}>
-              {isPharmacy
-                ? `Authorized for transport and doorstep handover of Schedule H & H1 medications under the National Pharmacy Field Logistics Guidelines. License Ref: ${profile.licenseNo}.`
-                : `Certified Medical Laboratory Technologist & Venipuncture Specialist compliant with ISO 15189 / NABL requirements for biological specimen handling. License Ref: ${profile.licenseNo}.`}
-            </p>
+          {/* Description */}
+          <p
+            style={{
+              fontSize: isMobile ? '12.5px' : '13px',
+              color: 'var(--text-muted)',
+              lineHeight: 1.55,
+              margin: '2px 0 0 0'
+            }}
+          >
+            {isPharmacy
+              ? `Authorized for transport and doorstep handover of Schedule H & H1 medications under the National Pharmacy Field Logistics Guidelines. License Ref: ${profile.licenseNo}.`
+              : `Certified Medical Laboratory Technologist & Venipuncture Specialist compliant with ISO 15189 / NABL requirements for biological specimen handling. License Ref: ${profile.licenseNo}.`}
+          </p>
 
-            <div style={{ display: 'flex', gap: '16px', marginTop: '10px', fontSize: '12px', color: 'var(--text-heading)' }}>
-              {isPharmacy ? (
-                <>
-                  <div>Vehicle: <strong>{profile.vehicle}</strong></div>
-                  <div>Cold Bag ID: <strong>CB-MYS-042</strong></div>
-                </>
-              ) : (
-                <>
-                  <div>Cold-Box Temp Sensor: <strong>{profile.coldBoxTemp || '3.6°C (Optimal)'}</strong></div>
-                  <div>Biohazard Kit: <strong>Inspected & Verified</strong></div>
-                </>
-              )}
-            </div>
+          {/* Structured Key Specs Grid for Phone & Desktop */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '8px',
+              marginTop: '4px'
+            }}
+          >
+            {isPharmacy ? (
+              <>
+                <div
+                  style={{
+                    background: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '8px',
+                    padding: '8px 10px'
+                  }}
+                >
+                  <div style={{ fontSize: '10px', color: '#64748B', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Vehicle
+                  </div>
+                  <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-heading)', marginTop: '2px', wordBreak: 'break-word' }}>
+                    {profile.vehicle}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '8px',
+                    padding: '8px 10px'
+                  }}
+                >
+                  <div style={{ fontSize: '10px', color: '#64748B', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Cold Bag ID
+                  </div>
+                  <div style={{ fontSize: '12px', fontWeight: '800', color: '#00A896', marginTop: '2px', whiteSpace: 'nowrap' }}>
+                    CB-MYS-042
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  style={{
+                    background: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '8px',
+                    padding: '8px 10px'
+                  }}
+                >
+                  <div style={{ fontSize: '10px', color: '#64748B', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Cold-Box Sensor
+                  </div>
+                  <div style={{ fontSize: '12px', fontWeight: '800', color: '#00A896', marginTop: '2px', whiteSpace: 'nowrap' }}>
+                    {profile.coldBoxTemp || '3.6°C (Optimal)'}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '8px',
+                    padding: '8px 10px'
+                  }}
+                >
+                  <div style={{ fontSize: '10px', color: '#64748B', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Biohazard Kit
+                  </div>
+                  <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-heading)', marginTop: '2px' }}>
+                    Inspected & Verified
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -490,36 +624,135 @@ export default function Profile() {
             </div>
           </form>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', fontSize: '13px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Phone size={16} color="#64748B" />
-              <div>
-                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block' }}>Mobile Number</span>
-                <strong>{profile.phone}</strong>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: isMobile ? '10px' : '16px',
+              fontSize: '13px'
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: isMobile ? '#F8FAFC' : 'transparent',
+                padding: isMobile ? '10px 12px' : '0',
+                borderRadius: isMobile ? '10px' : '0',
+                border: isMobile ? '1px solid #E2E8F0' : 'none'
+              }}
+            >
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  background: '#EEF4FB',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                <Phone size={17} color="#002244" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block', fontWeight: '600' }}>Mobile Number</span>
+                <strong style={{ color: 'var(--text-heading)', fontSize: '13.5px', wordBreak: 'break-word' }}>{profile.phone}</strong>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Mail size={16} color="#64748B" />
-              <div>
-                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block' }}>Email Address</span>
-                <strong>{profile.email}</strong>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: isMobile ? '#F8FAFC' : 'transparent',
+                padding: isMobile ? '10px 12px' : '0',
+                borderRadius: isMobile ? '10px' : '0',
+                border: isMobile ? '1px solid #E2E8F0' : 'none'
+              }}
+            >
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  background: '#EEF4FB',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                <Mail size={17} color="#002244" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block', fontWeight: '600' }}>Email Address</span>
+                <strong style={{ color: 'var(--text-heading)', fontSize: '13px', wordBreak: 'break-all' }}>{profile.email}</strong>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <MapPin size={16} color="#64748B" />
-              <div>
-                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block' }}>Address & City</span>
-                <strong>{profile.address}, {profile.city} ({profile.pincode})</strong>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: isMobile ? '#F8FAFC' : 'transparent',
+                padding: isMobile ? '10px 12px' : '0',
+                borderRadius: isMobile ? '10px' : '0',
+                border: isMobile ? '1px solid #E2E8F0' : 'none'
+              }}
+            >
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  background: '#EEF4FB',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                <MapPin size={17} color="#002244" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block', fontWeight: '600' }}>Address & City</span>
+                <strong style={{ color: 'var(--text-heading)', fontSize: '13px', wordBreak: 'break-word' }}>{profile.address}, {profile.city} ({profile.pincode})</strong>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Bike size={16} color="#64748B" />
-              <div>
-                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block' }}>Field Vehicle</span>
-                <strong>{profile.vehicle}</strong>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: isMobile ? '#F8FAFC' : 'transparent',
+                padding: isMobile ? '10px 12px' : '0',
+                borderRadius: isMobile ? '10px' : '0',
+                border: isMobile ? '1px solid #E2E8F0' : 'none'
+              }}
+            >
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  background: '#E6F8F5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                <Bike size={17} color="#00A896" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block', fontWeight: '600' }}>Field Vehicle</span>
+                <strong style={{ color: 'var(--text-heading)', fontSize: '13px', wordBreak: 'break-word' }}>{profile.vehicle}</strong>
               </div>
             </div>
           </div>

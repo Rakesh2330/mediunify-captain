@@ -935,47 +935,74 @@ h1, h2, h3, h4, h5, h6 {
   }
   .bottom-nav {
     display: block !important;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   }
   .page-container {
-    padding: 14px 12px 80px 12px !important;
+    padding: 12px 12px calc(84px + env(safe-area-inset-bottom, 0px)) 12px !important;
+    -webkit-overflow-scrolling: touch;
   }
   .top-header {
-    padding: 10px 12px !important;
+    padding: 10px 14px !important;
   }
   .hide-on-mobile {
     display: none !important;
   }
+  .demo-role-banner {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .demo-switch-btn {
+    padding: 3px 10px !important;
+    font-size: 11px !important;
+  }
   h1 {
     font-size: 19px !important;
+    line-height: 1.25 !important;
   }
   h2 {
     font-size: 17px !important;
+    line-height: 1.3 !important;
   }
   h3 {
     font-size: 15px !important;
+    line-height: 1.35 !important;
   }
   .btn-lg {
-    padding: 11px 16px !important;
-    font-size: 13.5px !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    min-height: 46px;
   }
   .card {
     padding: 16px 14px !important;
-    word-break: break-word;
-    overflow: hidden;
+    border-radius: var(--radius-lg) !important;
+    word-break: normal;
+    overflow-wrap: break-word;
+    box-shadow: var(--shadow-sm);
   }
 }
 
 .mobile-frame-mode .page-container {
-  padding: 14px 12px 80px 12px !important;
+  padding: 12px 12px calc(84px + env(safe-area-inset-bottom, 0px)) 12px !important;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-frame-mode .btn-lg {
-  padding: 11px 16px !important;
-  font-size: 13.5px !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  min-height: 46px;
 }
 
 .mobile-frame-mode .card {
   padding: 16px 14px !important;
-  word-break: break-word;
-  overflow: hidden;
+  border-radius: var(--radius-lg) !important;
+  word-break: normal;
+  overflow-wrap: break-word;
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-frame-mode .demo-role-banner {
+  padding: 6px 12px !important;
+  font-size: 11px !important;
 }
