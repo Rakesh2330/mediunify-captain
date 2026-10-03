@@ -257,28 +257,28 @@ export default function TaskCard({ task }) {
         style={{ 
           display: 'grid', 
           gridTemplateColumns: '1fr 1fr', 
-          gap: '10px', 
-          marginTop: '16px', 
-          paddingTop: '14px', 
+          gap: '8px', 
+          marginTop: '12px', 
+          paddingTop: '12px', 
           borderTop: '1px solid var(--border-card)' 
         }}
       >
         <button
           onClick={() => navigate(`/tasks/${task.id}`)}
           className="btn btn-outline"
-          style={{ width: '100%', padding: '9px 12px', fontSize: '13px', fontWeight: '700' }}
+          style={{ width: '100%', padding: '8px 10px', fontSize: '12px', fontWeight: '700', borderRadius: '8px', gap: '6px' }}
         >
-          <FileText size={15} />
-          <span>{isPharmacy ? 'VIEW ORDER' : 'VIEW DETAILS'}</span>
+          <FileText size={14} />
+          <span>{isPharmacy ? 'View Order' : 'View Details'}</span>
         </button>
 
         <button
           onClick={handleNavigate}
           className={`btn ${activeOtherOrder ? 'btn-outline' : 'btn-primary'}`}
-          style={{ width: '100%', padding: '9px 12px', fontSize: '13px', opacity: activeOtherOrder ? 0.6 : 1 }}
+          style={{ width: '100%', padding: '8px 10px', fontSize: '12px', fontWeight: '700', borderRadius: '8px', opacity: activeOtherOrder ? 0.6 : 1, gap: '6px' }}
         >
-          {activeOtherOrder ? <Lock size={14} /> : <Navigation size={15} />}
-          <span>{activeOtherOrder ? `LOCKED (#${activeOtherOrder.id})` : (isPharmacy ? (hasPickedUp ? 'NAVIGATE (PATIENT)' : 'NAVIGATE (PHARMACY)') : 'NAVIGATE')}</span>
+          {activeOtherOrder ? <Lock size={13} /> : <Navigation size={14} />}
+          <span>{activeOtherOrder ? `Locked (#${activeOtherOrder.id})` : (isPharmacy ? (hasPickedUp ? 'To Patient' : 'To Pharmacy') : 'Navigate')}</span>
         </button>
       </div>
     </div>

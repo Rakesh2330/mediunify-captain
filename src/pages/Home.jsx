@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTasks } from '../context/TaskContext';
@@ -27,9 +27,21 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
-  const { captainType, profile, dutyStatus, toggleDutyStatus } = useAuth();
+  const { captainType, profile, dutyStatus, toggleDutyStatus, deviceMode } = useAuth();
   const { labTasks, pharmacyTasks, earnings, updateTaskStatus } = useTasks();
   const navigate = useNavigate();
+
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = deviceMode === 'mobile_frame' || windowWidth <= 768;
 
   const isPharmacy = captainType === 'pharmacy';
   const tasks = isPharmacy ? pharmacyTasks : labTasks;
@@ -486,14 +498,33 @@ export default function Home() {
             </div>
 
             {/* View Task CTA button */}
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1.15fr 1fr' : '1.2fr 1fr',
+                gap: isMobile ? '8px' : '12px',
+                marginTop: '6px'
+              }}
+            >
               <button
                 onClick={() => navigate(`/tasks/${activeTask.id}`)}
-                className="btn btn-primary btn-lg"
-                style={{ flex: 1, minWidth: '200px' }}
+                className="btn btn-primary"
+                style={{
+                  padding: isMobile ? '9px 12px' : '11px 18px',
+                  fontSize: isMobile ? '12px' : '13.5px',
+                  fontWeight: '700',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap',
+                  letterSpacing: '0.02em',
+                  boxShadow: 'var(--shadow-teal-sm)'
+                }}
               >
-                <span>OPEN WORKFLOW STEPS</span>
-                <ArrowRight size={18} />
+                <span>Workflow Steps</span>
+                <ArrowRight size={isMobile ? 15 : 17} />
               </button>
 
               <button
@@ -511,15 +542,27 @@ export default function Home() {
 
                   navigate(`/navigation?taskId=${activeTask.id}&dest=${dest}`);
                 }}
-                className="btn btn-navy btn-lg"
-                style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                className="btn btn-navy"
+                style={{
+                  padding: isMobile ? '9px 12px' : '11px 18px',
+                  fontSize: isMobile ? '12px' : '13.5px',
+                  fontWeight: '700',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap',
+                  letterSpacing: '0.02em',
+                  boxShadow: '0 4px 14px rgba(0, 34, 68, 0.25)'
+                }}
                 title="Direct Route Navigation"
               >
-                <Navigation size={18} />
+                <Navigation size={isMobile ? 14 : 16} />
                 <span>
                   {activeTask.type === 'pharmacy' 
-                    ? (['ORDER_PICKED_UP', 'GOING_TO_PATIENT', 'ARRIVED_AT_PATIENT'].includes(activeTask.status) ? 'GPS TO PATIENT' : 'GPS TO PHARMACY')
-                    : 'START GPS'}
+                    ? (['ORDER_PICKED_UP', 'GOING_TO_PATIENT', 'ARRIVED_AT_PATIENT'].includes(activeTask.status) ? 'To Patient' : 'To Pharmacy')
+                    : 'Start GPS'}
                 </span>
               </button>
             </div>
