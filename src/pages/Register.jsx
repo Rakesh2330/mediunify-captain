@@ -16,6 +16,7 @@ import {
   Activity,
   ShieldCheck
 } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 
 export default function Register() {
   const { register } = useAuth();
@@ -128,7 +129,7 @@ export default function Register() {
             <span>Back to Login</span>
           </Link>
 
-          <img src="/logo.png" alt="MediUnify" style={{ height: '34px' }} />
+          <img src={logoImg} alt="MediUnify" style={{ height: '34px' }} />
         </div>
 
         <div style={{ marginBottom: '24px' }}>
