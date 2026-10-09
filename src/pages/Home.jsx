@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
-  const { captainType, profile, dutyStatus, toggleDutyStatus, deviceMode } = useAuth();
+  const { captainType, profile, dutyStatus, toggleDutyStatus } = useAuth();
   const { labTasks, pharmacyTasks, earnings, updateTaskStatus } = useTasks();
   const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ export default function Home() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isMobile = deviceMode === 'mobile_frame' || windowWidth <= 768;
+  const isMobile = windowWidth <= 768;
 
   const isPharmacy = captainType === 'pharmacy';
   const tasks = isPharmacy ? pharmacyTasks : labTasks;

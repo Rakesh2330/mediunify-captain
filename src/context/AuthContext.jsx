@@ -18,10 +18,6 @@ export function AuthProvider({ children }) {
     return localStorage.getItem('mediunify_duty_status') || 'ONLINE';
   });
 
-  const [deviceMode, setDeviceMode] = useState(() => {
-    return localStorage.getItem('mediunify_device_mode') || 'responsive'; // 'responsive' | 'mobile_frame'
-  });
-
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem(`mediunify_profile_${captainType}`);
     if (saved) {
@@ -85,12 +81,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const toggleDeviceMode = () => {
-    const nextMode = deviceMode === 'responsive' ? 'mobile_frame' : 'responsive';
-    setDeviceMode(nextMode);
-    localStorage.setItem('mediunify_device_mode', nextMode);
-  };
-
   const updateProfile = (updatedFields) => {
     setProfile(prev => {
       const updated = { ...prev, ...updatedFields };
@@ -139,12 +129,10 @@ export function AuthProvider({ children }) {
         captainType,
         dutyStatus,
         profile,
-        deviceMode,
         login,
         logout,
         switchRole,
         toggleDutyStatus,
-        toggleDeviceMode,
         updateProfile,
         register
       }}

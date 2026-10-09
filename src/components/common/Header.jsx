@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
 import { useTasks } from '../../context/TaskContext';
-import { Bell, Smartphone, Monitor, Pill, Activity, Lock } from 'lucide-react';
+import { Bell, Pill, Activity, Lock } from 'lucide-react';
 import logoImg from '../../assets/logo.png';
 
-export default function Header({ isMobileFrame = false }) {
-  const { captainType, profile, dutyStatus, toggleDutyStatus, deviceMode, toggleDeviceMode } = useAuth();
+export default function Header() {
+  const { captainType, profile, dutyStatus, toggleDutyStatus } = useAuth();
   const { unreadCount } = useNotifications();
   const { labTasks, pharmacyTasks } = useTasks();
   const [logoLoadFailed, setLogoLoadFailed] = useState(false);
@@ -36,8 +36,8 @@ export default function Header({ isMobileFrame = false }) {
               alt="MediUnify" 
               className="brand-logo-img" 
               style={{ 
-                height: isMobileFrame ? '32px' : '40px', 
-                maxWidth: isMobileFrame ? '140px' : '180px',
+                height: '40px', 
+                maxWidth: '180px',
                 objectFit: 'contain',
                 display: 'block'
               }} 
@@ -54,8 +54,8 @@ export default function Header({ isMobileFrame = false }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div
                 style={{
-                  width: isMobileFrame ? '30px' : '36px',
-                  height: isMobileFrame ? '30px' : '36px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '10px',
                   background: 'linear-gradient(135deg, #002244 0%, #00A896 100%)',
                   display: 'flex',
@@ -63,14 +63,14 @@ export default function Header({ isMobileFrame = false }) {
                   justifyContent: 'center',
                   color: 'white',
                   fontWeight: '900',
-                  fontSize: isMobileFrame ? '14px' : '16px',
+                  fontSize: '16px',
                   boxShadow: '0 3px 8px rgba(0, 168, 150, 0.3)'
                 }}
               >
                 +
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-                <span style={{ fontSize: isMobileFrame ? '15px' : '17px', fontWeight: '900', color: '#002244', letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: '17px', fontWeight: '900', color: '#002244', letterSpacing: '-0.02em' }}>
                   Medi<span style={{ color: '#00A896' }}>Unify</span>
                 </span>
                 <span style={{ fontSize: '9px', fontWeight: '800', color: '#00A896', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
@@ -79,67 +79,40 @@ export default function Header({ isMobileFrame = false }) {
               </div>
             </div>
           )}
-          {!isMobileFrame && (
-            <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '0.08em', color: '#002244', textTransform: 'uppercase' }}>
-                CAPTAIN PORTAL
-              </span>
-              <span style={{ fontSize: '10px', color: '#00A896', fontWeight: '700' }}>
-                Healthcare at Your Doorstep
-              </span>
-            </div>
-          )}
+          <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '0.08em', color: '#002244', textTransform: 'uppercase' }}>
+              CAPTAIN PORTAL
+            </span>
+            <span style={{ fontSize: '10px', color: '#00A896', fontWeight: '700' }}>
+              Healthcare at Your Doorstep
+            </span>
+          </div>
         </Link>
 
         {/* Role Credential Badge */}
-        {!isMobileFrame && (
-          <div 
-            className="hide-on-mobile"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: isPharmacy ? '#E6F8F5' : '#EEF4FB',
-              border: `1px solid ${isPharmacy ? '#A7F3D0' : '#BAE6FD'}`,
-              borderRadius: '999px',
-              padding: '4px 14px',
-              fontSize: '12px',
-              fontWeight: '700',
-              color: isPharmacy ? '#065F46' : '#0369A1',
-              gap: '6px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
-            }}
-          >
-            {isPharmacy ? <Pill size={14} color="#00A896" /> : <Activity size={14} color="#0284C7" />}
-            <span>{isPharmacy ? 'Pharmacy Fleet Captain' : 'Diagnostic Lab Fleet Captain'}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Header Right Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: isMobileFrame ? '8px' : '14px' }}>
-        {/* Device Frame Mode Toggle (Web vs Phone view) */}
-        <button
-          onClick={toggleDeviceMode}
+        <div 
           className="hide-on-mobile"
-          title={deviceMode === 'responsive' ? 'Switch to Phone Frame Preview' : 'Switch to Responsive Web'}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            background: '#F1F5F9',
-            border: '1px solid #CBD5E1',
-            borderRadius: 'var(--radius-full)',
-            padding: '6px 14px',
+            background: isPharmacy ? '#E6F8F5' : '#EEF4FB',
+            border: `1px solid ${isPharmacy ? '#A7F3D0' : '#BAE6FD'}`,
+            borderRadius: '999px',
+            padding: '4px 14px',
             fontSize: '12px',
             fontWeight: '700',
-            color: '#334155',
-            cursor: 'pointer',
-            transition: 'all var(--transition-fast)'
+            color: isPharmacy ? '#065F46' : '#0369A1',
+            gap: '6px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
           }}
         >
-          {deviceMode === 'responsive' ? <Smartphone size={15} color="#002244" /> : <Monitor size={15} color="#00A896" />}
-          <span>{deviceMode === 'responsive' ? 'Phone Mode' : 'Web View'}</span>
-        </button>
+          {isPharmacy ? <Pill size={14} color="#00A896" /> : <Activity size={14} color="#0284C7" />}
+          <span>{isPharmacy ? 'Pharmacy Fleet Captain' : 'Diagnostic Lab Fleet Captain'}</span>
+        </div>
+      </div>
+
+      {/* Header Right Actions */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
 
         {/* Duty Status Toggle */}
         <div

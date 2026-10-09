@@ -38,20 +38,67 @@ export default function CameraProofCapture({
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
 
-  // Process file upload from input
-  const handleFileChange = (e) => {
+  // Compress and resize images to lightweight JPEG under 30KB
+  const compressImageFile = (file, maxWidth = 640, maxHeight = 640, quality = 0.65) => {
+    return new Promise((resolve) => {
+      try {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let { width, height } = img;
+            if (width > maxWidth || height > maxHeight) {
+              if (width > height) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              } else {
+                width = Math.round((width * maxHeight) / height);
+                height = maxHeight;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Add GPS Watermark Overlay
+            const now = new Date();
+            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            ctx.fillStyle = 'rgba(0, 23, 48, 0.75)';
+            ctx.fillRect(0, height - 36, width, 36);
+            ctx.fillStyle = '#00C49F';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('✓ MEDIUNIFY CAPTAIN PROOF', 10, height - 20);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '10px sans-serif';
+            ctx.fillText(`GPS: 12.3082° N, 76.6542° E • ${timeString}`, 10, height - 8);
+
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = () => resolve(e.target?.result);
+          img.src = e.target?.result;
+        };
+        reader.readAsDataURL(file);
+      } catch (err) {
+        console.warn('Image compression fallback:', err);
+        resolve(null);
+      }
+    });
+  };
+
+  // Process file upload from input with automatic downsampling
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result;
-      setPreview(base64);
-      if (onPhotoCapture) onPhotoCapture(base64);
-      // Reset input value so same file can be chosen again if needed
-      e.target.value = '';
-    };
-    reader.readAsDataURL(file);
+    const compressed = await compressImageFile(file);
+    if (compressed) {
+      setPreview(compressed);
+      if (onPhotoCapture) onPhotoCapture(compressed);
+    }
+    // Reset input value so same file can be chosen again if needed
+    e.target.value = '';
   };
 
   // Open native camera input
@@ -109,8 +156,20 @@ export default function CameraProofCapture({
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    const width = video.videoWidth || 640;
-    const height = video.videoHeight || 480;
+    let width = video.videoWidth || 640;
+    let height = video.videoHeight || 480;
+
+    // Downscale if higher than 640px to protect localStorage quota
+    const maxDim = 640;
+    if (width > maxDim || height > maxDim) {
+      if (width > height) {
+        height = Math.round((height * maxDim) / width);
+        width = maxDim;
+      } else {
+        width = Math.round((width * maxDim) / height);
+        height = maxDim;
+      }
+    }
 
     canvas.width = width;
     canvas.height = height;
@@ -121,22 +180,22 @@ export default function CameraProofCapture({
 
     // Add GPS Watermark Overlay
     const now = new Date();
-    const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+    const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     // Dark banner at bottom
     ctx.fillStyle = 'rgba(0, 23, 48, 0.75)';
-    ctx.fillRect(0, height - 60, width, 60);
+    ctx.fillRect(0, height - 36, width, 36);
 
     // Watermark text
     ctx.fillStyle = '#00C49F';
-    ctx.font = 'bold 16px sans-serif';
-    ctx.fillText('✓ MEDIUNIFY CAPTAIN PROOF', 18, height - 36);
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('✓ MEDIUNIFY CAPTAIN PROOF', 10, height - 20);
 
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '13px sans-serif';
-    ctx.fillText(`GPS: 12.3082° N, 76.6542° E • ${timeString}`, 18, height - 16);
+    ctx.font = '10px sans-serif';
+    ctx.fillText(`GPS: 12.3082° N, 76.6542° E • ${timeString}`, 10, height - 8);
 
-    const snapshotUrl = canvas.toDataURL('image/jpeg', 0.85);
+    const snapshotUrl = canvas.toDataURL('image/jpeg', 0.65);
     setPreview(snapshotUrl);
     if (onPhotoCapture) onPhotoCapture(snapshotUrl);
 

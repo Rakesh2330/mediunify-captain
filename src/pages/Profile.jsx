@@ -26,7 +26,7 @@ import { useTasks } from '../context/TaskContext';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { profile, captainType, updateProfile, logout, deviceMode } = useAuth();
+  const { profile, captainType, updateProfile, logout } = useAuth();
   
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1024
@@ -38,7 +38,7 @@ export default function Profile() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isMobile = deviceMode === 'mobile_frame' || windowWidth <= 768;
+  const isMobile = windowWidth <= 768;
   const { labTasks, pharmacyTasks } = useTasks();
   const isPharmacy = captainType === 'pharmacy';
   const tasks = isPharmacy ? pharmacyTasks : labTasks;

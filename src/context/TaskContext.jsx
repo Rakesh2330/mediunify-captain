@@ -1,54 +1,62 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { INITIAL_LAB_TASKS, INITIAL_PHARMACY_TASKS, INITIAL_COMPLETED_HISTORY, EARNINGS_SUMMARY } from '../data/mockData';
 import { soundEffects } from '../utils/audio';
+import { safeGetItem, safeSetItem, safeRemoveItem } from '../utils/safeStorage';
 
 const TaskContext = createContext(null);
 
-const DATA_VERSION = 'v6_pharmacy_flow_fixed';
+const DATA_VERSION = 'v7_quota_safe';
 
 export function TaskProvider({ children }) {
   const isOutdated = typeof window !== 'undefined' && localStorage.getItem('mediunify_data_version') !== DATA_VERSION;
 
+  // Clean old bloated storage if version upgraded
+  if (isOutdated && typeof window !== 'undefined') {
+    safeRemoveItem('mediunify_lab_tasks');
+    safeRemoveItem('mediunify_pharmacy_tasks');
+    safeRemoveItem('mediunify_task_history');
+    safeRemoveItem('mediunify_earnings');
+    try {
+      localStorage.setItem('mediunify_data_version', DATA_VERSION);
+    } catch (e) {}
+  }
+
   const [labTasks, setLabTasks] = useState(() => {
     if (isOutdated) return INITIAL_LAB_TASKS;
-    const saved = localStorage.getItem('mediunify_lab_tasks');
-    return saved ? JSON.parse(saved) : INITIAL_LAB_TASKS;
+    return safeGetItem('mediunify_lab_tasks', INITIAL_LAB_TASKS);
   });
 
   const [pharmacyTasks, setPharmacyTasks] = useState(() => {
     if (isOutdated) return INITIAL_PHARMACY_TASKS;
-    const saved = localStorage.getItem('mediunify_pharmacy_tasks');
-    return saved ? JSON.parse(saved) : INITIAL_PHARMACY_TASKS;
+    return safeGetItem('mediunify_pharmacy_tasks', INITIAL_PHARMACY_TASKS);
   });
 
   const [history, setHistory] = useState(() => {
     if (isOutdated) return INITIAL_COMPLETED_HISTORY;
-    const saved = localStorage.getItem('mediunify_task_history');
-    return saved ? JSON.parse(saved) : INITIAL_COMPLETED_HISTORY;
+    return safeGetItem('mediunify_task_history', INITIAL_COMPLETED_HISTORY);
   });
 
   const [earnings, setEarnings] = useState(() => {
     if (isOutdated) return EARNINGS_SUMMARY;
-    const saved = localStorage.getItem('mediunify_earnings');
-    return saved ? JSON.parse(saved) : EARNINGS_SUMMARY;
+    return safeGetItem('mediunify_earnings', EARNINGS_SUMMARY);
   });
 
-  // Save changes and data version to localStorage
+  // Save changes and data version to localStorage safely
   useEffect(() => {
-    localStorage.setItem('mediunify_data_version', DATA_VERSION);
-    localStorage.setItem('mediunify_lab_tasks', JSON.stringify(labTasks));
+    safeSetItem('mediunify_data_version', DATA_VERSION);
+    safeSetItem('mediunify_lab_tasks', labTasks);
   }, [labTasks]);
 
   useEffect(() => {
-    localStorage.setItem('mediunify_pharmacy_tasks', JSON.stringify(pharmacyTasks));
+    safeSetItem('mediunify_pharmacy_tasks', pharmacyTasks);
   }, [pharmacyTasks]);
 
   useEffect(() => {
-    localStorage.setItem('mediunify_task_history', JSON.stringify(history));
+    safeSetItem('mediunify_task_history', history);
   }, [history]);
 
   useEffect(() => {
-    localStorage.setItem('mediunify_earnings', JSON.stringify(earnings));
+    safeSetItem('mediunify_earnings', earnings);
   }, [earnings]);
 
   // Update specific task by ID
@@ -129,10 +137,10 @@ export function TaskProvider({ children }) {
     setPharmacyTasks(INITIAL_PHARMACY_TASKS);
     setHistory(INITIAL_COMPLETED_HISTORY);
     setEarnings(EARNINGS_SUMMARY);
-    localStorage.removeItem('mediunify_lab_tasks');
-    localStorage.removeItem('mediunify_pharmacy_tasks');
-    localStorage.removeItem('mediunify_task_history');
-    localStorage.removeItem('mediunify_earnings');
+    safeRemoveItem('mediunify_lab_tasks');
+    safeRemoveItem('mediunify_pharmacy_tasks');
+    safeRemoveItem('mediunify_task_history');
+    safeRemoveItem('mediunify_earnings');
     soundEffects.playAlert();
   };
 

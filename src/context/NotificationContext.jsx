@@ -1,23 +1,23 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { INITIAL_NOTIFICATIONS } from '../data/mockData';
 import { soundEffects } from '../utils/audio';
+import { safeGetItem, safeSetItem } from '../utils/safeStorage';
 
 const NotificationContext = createContext(null);
 
-const NOTIF_VERSION = 'v4_new_fresh_mock_data';
+const NOTIF_VERSION = 'v5_quota_safe';
 
 export function NotificationProvider({ children }) {
   const isOutdated = typeof window !== 'undefined' && localStorage.getItem('mediunify_notif_version') !== NOTIF_VERSION;
 
   const [notifications, setNotifications] = useState(() => {
     if (isOutdated) return INITIAL_NOTIFICATIONS;
-    const saved = localStorage.getItem('mediunify_notifications');
-    return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
+    return safeGetItem('mediunify_notifications', INITIAL_NOTIFICATIONS);
   });
 
   useEffect(() => {
-    localStorage.setItem('mediunify_notif_version', NOTIF_VERSION);
-    localStorage.setItem('mediunify_notifications', JSON.stringify(notifications));
+    safeSetItem('mediunify_notif_version', NOTIF_VERSION);
+    safeSetItem('mediunify_notifications', notifications);
   }, [notifications]);
 
   const markAsRead = (id) => {

@@ -13,12 +13,11 @@ import {
   LogOut, 
   ChevronRight, 
   Headphones, 
-  Check,
-  Smartphone
+  Check
 } from 'lucide-react';
 
 export default function SettingsPage() {
-  const { logout, captainType, deviceMode, toggleDeviceMode } = useAuth();
+  const { logout, captainType } = useAuth();
   const navigate = useNavigate();
 
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
@@ -76,26 +75,6 @@ export default function SettingsPage() {
             </div>
             <ChevronRight size={18} color="#94A3B8" />
           </Link>
-
-
-          {/* Device Frame Mode Toggle */}
-          <div
-            onClick={toggleDeviceMode}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', cursor: 'pointer' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Smartphone size={18} color="#002244" />
-              <div>
-                <strong style={{ fontSize: '14px', color: 'var(--text-heading)' }}>Device Presentation Frame</strong>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  {deviceMode === 'responsive' ? 'Standard Responsive Web View' : 'Emulated Mobile Smartphone Shell'}
-                </div>
-              </div>
-            </div>
-            <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '12px' }}>
-              Toggle Frame
-            </button>
-          </div>
         </div>
 
         {/* Section 2: Security & Support */}
